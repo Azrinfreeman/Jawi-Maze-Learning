@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using Door;
 using GamePauseUi;
 using Ghosts;
@@ -7,6 +8,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using UnityEngine.Tilemaps;
 
 namespace GameHandler
 {
@@ -32,9 +34,16 @@ namespace GameHandler
         private int _ghostsModeTimesIndex;
         private float _switcherModeTimer;
         public bool _allTimersPaused;
+        public int level;
+        public Transform exitButton;
+
+        public List<AnswerController> answer;
+
+        public List<Transform> wallBorders;
+        public List<Transform> PlayerAndGhosts;
 
         // Timer for ghost frightened
-        public uint frightenedTime = 10;
+        public int frightenedTime = 10;
         private float _frightenTimer;
         private bool _switcherModeTimerPaused;
 
@@ -55,11 +64,11 @@ namespace GameHandler
 
         public int GhostCountEaten { get; set; }
 
-
         #region Awake Singleton
 
         private void Awake()
         {
+            initAnswer();
             if (Instance != null && Instance != this)
                 Destroy(this);
             else
@@ -71,7 +80,19 @@ namespace GameHandler
         #region Start and Update
 
         private void Start()
-        {
+        { //change RedGhostAi tilemap to the next one
+            GameObject.Find("RedGhost").GetComponent<RedGhostAiMovement>().runSpeed = 2f;
+
+            //change BlueGhostAi tilemap to the next one
+            GameObject.Find("BlueGhost").GetComponent<BlueGhostAiMovement>().runSpeed = 2f;
+
+            //change OrangeGhostAi tilemap to the next one
+            GameObject.Find("OrangeGhost").GetComponent<OrangeGhostAiMovement>().runSpeed = 2f;
+
+            //change PinkGhostAi tilemap to the next one
+            GameObject.Find("PinkGhost").GetComponent<PinkGhostAiMovement>().runSpeed = 2f;
+            level = 1;
+            GameObject.Find("TextLevel").GetComponent<TextMeshProUGUI>().text = "Level: " + level;
             _ghosts = FindObjectsOfType<GhostAiMovement>();
             _player = FindObjectOfType<PlayerController>();
             winText.enabled = false;
@@ -80,6 +101,23 @@ namespace GameHandler
             UpdateGhostsMode();
             gamePauseUiHandler.Reset();
             pauseMenuUi.SetActive(false);
+        }
+
+        public void initAnswer()
+        {
+            for (int i = 0; i < GameObject.Find("Grid").transform.childCount; i++)
+            {
+                //                Debug.Log(GameObject.Find("Grid").transform.GetChild(i).transform.name);
+                if (GameObject.Find("Grid").transform.GetChild(i).name.Contains("Walls"))
+                {
+                    answer.Add(
+                        GameObject
+                            .Find("Grid")
+                            .transform.GetChild(i)
+                            .GetComponent<AnswerController>()
+                    );
+                }
+            }
         }
 
         private void Update()
@@ -171,7 +209,8 @@ namespace GameHandler
                 _frightenTimer = 0; // Reset the timer if the ghosts are already in frightened mode.
 
             _switcherModeTimerPaused = true;
-            foreach (var ghost in _ghosts) ghost.SetGhostMode(GhostMode.Frightened);
+            foreach (var ghost in _ghosts)
+                ghost.SetGhostMode(GhostMode.Frightened);
             doorHandler.OpenDoor();
 
             MusicHandler.MusicHandler.Instance.StopMusic();
@@ -186,8 +225,13 @@ namespace GameHandler
         {
             // If we are in the last mode, which is chase mode.
             // or if the last mode in the array is chase mode then we are in final chase mode.
-            if (_ghostsModeTimesIndex >= ghostsModeTimes.Length ||
-                (_ghostsModeTimesIndex == ghostsModeTimes.Length - 1 && GameGhostsMode == GhostMode.Chase))
+            if (
+                _ghostsModeTimesIndex >= ghostsModeTimes.Length
+                || (
+                    _ghostsModeTimesIndex == ghostsModeTimes.Length - 1
+                    && GameGhostsMode == GhostMode.Chase
+                )
+            )
             {
                 currentModeText.text = "Chase";
                 return;
@@ -206,6 +250,24 @@ namespace GameHandler
         #endregion
 
         #region Reset functions
+
+        public void ChangeGhostSpeed()
+        {
+            if (GameObject.Find("RedGhost").GetComponent<RedGhostAiMovement>().runSpeed != 4)
+            {
+                //change RedGhostAi tilemap to the next one
+                GameObject.Find("RedGhost").GetComponent<RedGhostAiMovement>().runSpeed++;
+
+                //change BlueGhostAi tilemap to the next one
+                GameObject.Find("BlueGhost").GetComponent<BlueGhostAiMovement>().runSpeed++;
+
+                //change OrangeGhostAi tilemap to the next one
+                GameObject.Find("OrangeGhost").GetComponent<OrangeGhostAiMovement>().runSpeed++;
+
+                //change PinkGhostAi tilemap to the next one
+                GameObject.Find("PinkGhost").GetComponent<PinkGhostAiMovement>().runSpeed++;
+            }
+        }
 
         public void KillPlayer()
         {
@@ -243,6 +305,17 @@ namespace GameHandler
             }
         }
 
+        public IEnumerator PlaySoundWithDelay()
+        {
+            yield return new WaitForSeconds(1f);
+            for (int i = 0; i < 10; i++)
+            {
+                GameHandler.Instance.answer[0].GetComponent<AnswerController>().playSound();
+
+                yield return new WaitForSeconds(0.8f);
+            }
+        }
+
         public void ResetGhostsAndPlayer()
         {
             // Reset the ghosts
@@ -260,7 +333,7 @@ namespace GameHandler
 
             // Play the music
             MusicHandler.MusicHandler.Instance.PlayGhostChase();
-
+            StartCoroutine(PlaySoundWithDelay());
             // // Reset the ghost mode.
             _allTimersPaused = false;
         }
@@ -291,7 +364,8 @@ namespace GameHandler
         public void DecrementPacGumNumber()
         {
             _pacGumCount--;
-            if (_pacGumCount <= 0) NextLevel();
+            if (_pacGumCount <= 0)
+                NextLevel();
         }
 
         private void NextLevel()
@@ -300,7 +374,8 @@ namespace GameHandler
 
             winText.enabled = true;
 
-            foreach (var ghost in _ghosts) ghost.gameObject.SetActive(false);
+            foreach (var ghost in _ghosts)
+                ghost.gameObject.SetActive(false);
 
             _player.enabled = false;
             _player.animator.enabled = false;
@@ -313,7 +388,8 @@ namespace GameHandler
 
         public void TogglePause()
         {
-            if (winText.enabled || gameOverText.enabled) return;
+            if (winText.enabled || gameOverText.enabled)
+                return;
 
             if (gamePausedText.enabled)
             {
@@ -325,7 +401,6 @@ namespace GameHandler
                 PauseGame();
             }
         }
-
 
         private void PauseGame()
         {

@@ -8,7 +8,7 @@ namespace GameHandler
         public static GameStartHandler Instance { get; private set; }
         public AudioSource StartAudioSource { get; private set; }
         public bool IsStarterPaused { get; private set; }
-public AnswerController[] answer;
+
         private void Awake()
         {
             if (Instance != null && Instance != this)
@@ -16,17 +16,7 @@ public AnswerController[] answer;
             else
                 Instance = this;
         }
-private IEnumerator PlaySoundWithDelay()
-{
-    for (int i = 0; i < 3; i++)
-    {
-        answer[0]
-            .GetComponent<AnswerController>()
-            .playSound();
 
-        yield return new WaitForSeconds(2f);
-    }
-}
         private void Start()
         {
             StartAudioSource = GetComponent<AudioSource>();
@@ -38,14 +28,11 @@ private IEnumerator PlaySoundWithDelay()
             if (StartAudioSource.isPlaying || IsStarterPaused)
                 return;
 
-
-        StartCoroutine(PlaySoundWithDelay());
-
-        GameHandler.Instance.ActivateGhostsAndPlayer();
+            StartCoroutine(GameHandler.Instance.PlaySoundWithDelay());
+            GameHandler.Instance.ActivateGhostsAndPlayer();
 
             enabled = false;
         }
-
 
         public void TogglePause()
         {

@@ -15,13 +15,13 @@ namespace Ghosts
         Scatter,
         Frightened,
         Eaten,
-        LeavingHouse
+        LeavingHouse,
     }
 
     public abstract class GhostAiMovement : MonoBehaviour
     {
         // Movement speed variables
-        public float runSpeed = 4f;
+        public float runSpeed = 3f;
         public float frightenedSpeed = 1f;
         public float eatenSpeed = 20f;
 
@@ -67,15 +67,11 @@ namespace Ghosts
         public AudioSource eatenAudioSource;
 
         // Scores
-        public int[] scoreValues =
-        {
-            200, 400, 800, 1600
-        };
+        public int[] scoreValues = { 200, 400, 800, 1600 };
 
         // Ghosts eaten variables
         private const float GhostPauseEatenTime = 0.6f;
         public GhostScoreDisplayer ghostScoreDisplayer;
-
 
         private void Start()
         {
@@ -92,7 +88,8 @@ namespace Ghosts
             NextTileDestination = (Vector2)pos + initDirection;
 
             // Set initial mode
-            if (isInGhostHouse) _ghostMode = GhostMode.LeavingHouse;
+            if (isInGhostHouse)
+                _ghostMode = GhostMode.LeavingHouse;
 
             // Body animation
             bodyAnimator = GetComponent<Animator>();
@@ -218,10 +215,15 @@ namespace Ghosts
             if (!_ghostHomeReached)
             {
                 ChaseTarget(enterHomeWayPoints[0].transform.position, eatenSpeed);
-                if (Vector2.Distance(transform.position, enterHomeWayPoints[0].transform.position) <= 0.5f)
+                if (
+                    Vector2.Distance(transform.position, enterHomeWayPoints[0].transform.position)
+                    <= 0.5f
+                )
                     _ghostHomeReached = true;
             }
-            else if (FollowPath(enterHomeWayPoints, ref _currentWayPointDestinationIndex, eatenSpeed))
+            else if (
+                FollowPath(enterHomeWayPoints, ref _currentWayPointDestinationIndex, eatenSpeed)
+            )
             {
                 goHomeAudioSource.Stop();
                 _ghostHomeReached = false;
@@ -243,9 +245,11 @@ namespace Ghosts
         {
             if (transform.position != waypoints[currentWaypoint].position)
             {
-                var p = Vector2.MoveTowards(transform.position,
+                var p = Vector2.MoveTowards(
+                    transform.position,
                     waypoints[currentWaypoint].position,
-                    speed * Time.deltaTime);
+                    speed * Time.deltaTime
+                );
                 _rigidbody2D.MovePosition(p);
             }
             else
@@ -259,11 +263,17 @@ namespace Ghosts
                 }
                 else if (_ghostMode == GhostMode.Eaten)
                 {
-                    UpdateFollowPathMoveEatenAnimation(enterHomeWayPoints, _currentWayPointDestinationIndex);
+                    UpdateFollowPathMoveEatenAnimation(
+                        enterHomeWayPoints,
+                        _currentWayPointDestinationIndex
+                    );
                 }
                 else if (_ghostMode == GhostMode.LeavingHouse)
                 {
-                    UpdateFollowPathMoveRunAnimation(exitHomeWayPoints, _currentWayPointDestinationIndex);
+                    UpdateFollowPathMoveRunAnimation(
+                        exitHomeWayPoints,
+                        _currentWayPointDestinationIndex
+                    );
                 }
             }
 
@@ -291,7 +301,9 @@ namespace Ghosts
 
             // if two or more possible directions then delete the opposite direction (preventing the ghost from going back)
             if (possibleDirections.Count > 1)
-                possibleDirections.Where(direction => direction == -_direction).ToList()
+                possibleDirections
+                    .Where(direction => direction == -_direction)
+                    .ToList()
                     .ForEach(direction => possibleDirections.Remove(direction));
             // for (var i = 0; i < possibleDirections.Count; i++)
             //     if (possibleDirections[i] == -_direction)
@@ -336,7 +348,11 @@ namespace Ghosts
             return possibleDirections;
         }
 
-        private void CalculateNextTileDestination(List<Vector2> possibleDirections, Vector2 position, Vector2 targetPos)
+        private void CalculateNextTileDestination(
+            List<Vector2> possibleDirections,
+            Vector2 position,
+            Vector2 targetPos
+        )
         {
             var shortestDistance = float.MaxValue;
             var shortestDirection = Vector2.zero;
@@ -345,7 +361,8 @@ namespace Ghosts
             {
                 var distance = Vector2.Distance(targetPos, position + direction);
 
-                if (!(distance < shortestDistance)) continue;
+                if (!(distance < shortestDistance))
+                    continue;
 
                 shortestDistance = distance;
                 shortestDirection = direction;
@@ -357,7 +374,11 @@ namespace Ghosts
 
         private void MoveGhost(Vector2 position, float speed)
         {
-            var positionVector = Vector2.MoveTowards(position, NextTileDestination, speed * Time.deltaTime);
+            var positionVector = Vector2.MoveTowards(
+                position,
+                NextTileDestination,
+                speed * Time.deltaTime
+            );
             _rigidbody2D.MovePosition(positionVector);
         }
 
@@ -366,7 +387,8 @@ namespace Ghosts
             var pos = (Vector2)transform.position;
             var cellPosition = tilemap.WorldToCell(pos + dir);
             var linecast = Physics2D.LinecastAll(pos + dir, pos);
-            return linecast.Any(t => t.collider.CompareTag(tilemap.tag)) || tilemap.HasTile(cellPosition);
+            return linecast.Any(t => t.collider.CompareTag(tilemap.tag))
+                || tilemap.HasTile(cellPosition);
         }
 
         #endregion
@@ -410,8 +432,8 @@ namespace Ghosts
                 {
                     > 0 => eyesSpriteArray[0],
                     < 0 => eyesSpriteArray[1],
-                    _ => eyesSpriteRenderer.sprite
-                }
+                    _ => eyesSpriteRenderer.sprite,
+                },
             };
         }
 
@@ -425,8 +447,8 @@ namespace Ghosts
                 {
                     > 0 => eyesSpriteArray[5],
                     < 0 => eyesSpriteArray[6],
-                    _ => eyesSpriteRenderer.sprite
-                }
+                    _ => eyesSpriteRenderer.sprite,
+                },
             };
         }
 
@@ -467,8 +489,9 @@ namespace Ghosts
             eyesSpriteRenderer.enabled = false;
             bodyRenderer.enabled = false;
             ghostScoreDisplayer.DisplayGhostScore();
-            ScoreHandler.ScoreHandler.Instance.AddScore(scoreValues[
-                GameHandler.GameHandler.Instance.GhostCountEaten++]);
+            ScoreHandler.ScoreHandler.Instance.AddScore(
+                scoreValues[GameHandler.GameHandler.Instance.GhostCountEaten++]
+            );
             PlayEatenAudio();
             Time.timeScale = 0;
             Time.fixedDeltaTime = 0;
@@ -486,7 +509,8 @@ namespace Ghosts
         public void Reset()
         {
             transform.position = _spawnPoint;
-            if (isInGhostHouse) _ghostMode = GhostMode.LeavingHouse;
+            if (isInGhostHouse)
+                _ghostMode = GhostMode.LeavingHouse;
 
             NextTileDestination = (Vector2)transform.position + initDirection;
         }

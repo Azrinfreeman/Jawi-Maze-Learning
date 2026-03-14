@@ -25,24 +25,24 @@ namespace ScoreHandler
         private void Start()
         {
             _audioSource = GetComponent<AudioSource>();
-            scoreText.SetText("Score: " + _score);
-            highScoreText.SetText("High Score: " + PlayerPrefs.GetInt(highScoreKey));
+            scoreText.SetText("Point: " + _score);
+            highScoreText.SetText("High Point: " + PlayerPrefs.GetInt(highScoreKey));
         }
 
         public void ResetScore()
         {
             _score = 0;
-            scoreText.SetText("Score: " + _score);
+            scoreText.SetText("Point: " + _score);
         }
 
         public void AddScore(int score)
         {
             _score += score;
-            scoreText.SetText("Score: " + _score);
+            scoreText.SetText("Point: " + _score);
             if (_score > PlayerPrefs.GetInt(highScoreKey))
             {
                 PlayerPrefs.SetInt(highScoreKey, _score);
-                highScoreText.SetText("High Score: " + _score);
+                highScoreText.SetText("High Point: " + _score);
 
                 if (!_reachHighScore)
                     _audioSource.Play();
@@ -52,7 +52,8 @@ namespace ScoreHandler
 
         public void UpdateHighScore()
         {
-            if (_score <= PlayerPrefs.GetInt(highScoreKey)) return;
+            if (_score <= PlayerPrefs.GetInt(highScoreKey))
+                return;
             PlayerPrefs.SetInt(highScoreKey, _score);
         }
     }

@@ -12,7 +12,17 @@ public class AnswerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        AnswerAssign();
         SelectRandomAnswer();
+    }
+
+    public void AnswerAssign()
+    {
+        answerCollection.Clear();
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            answerCollection.Add(transform.GetChild(i).GetComponent<answerCollect>());
+        }
     }
 
     public void SelectRandomAnswer()
@@ -20,7 +30,14 @@ public class AnswerController : MonoBehaviour
         randomNumber = UnityEngine.Random.Range(0, answerCollection.Count);
 
         answerCollection[randomNumber].GetComponent<answerCollect>().correctAnswer = true;
+    }
 
+    public void RemoveTheAnswerTick()
+    {
+        for (int i = 0; i < answerCollection.Count; i++)
+        {
+            answerCollection[i].GetComponent<answerCollect>().correctAnswer = false;
+        }
     }
 
     public void RemoveAnswer()
@@ -34,6 +51,14 @@ public class AnswerController : MonoBehaviour
         if (!answerCollection[randomNumber].GetComponent<AudioSource>().isPlaying)
         {
             answerCollection[randomNumber].GetComponent<AudioSource>().Play();
+        }
+    }
+
+    public void stopSound()
+    {
+        for (int i = 0; i < answerCollection.Count; i++)
+        {
+            answerCollection[i].GetComponent<AudioSource>().Stop();
         }
     }
 
