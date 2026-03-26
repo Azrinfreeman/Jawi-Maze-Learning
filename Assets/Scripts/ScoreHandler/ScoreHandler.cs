@@ -9,7 +9,7 @@ namespace ScoreHandler
         public TextMeshProUGUI scoreText;
         public TextMeshProUGUI highScoreText;
         private bool _reachHighScore;
-        private int _score;
+        public int _score;
         public static ScoreHandler Instance { get; private set; }
 
         private AudioSource _audioSource;
@@ -20,6 +20,12 @@ namespace ScoreHandler
                 Destroy(this);
             else
                 Instance = this;
+        }
+
+        public void UpdateScores()
+        {
+            PlayerPrefs.SetInt("StarsCollected_" + PlayerPrefs.GetInt("CurrentPlayerNo_"), +_score);
+            //PlayerPrefs.GetInt("StarsCollected_" + PlayerPrefs.GetInt("CurrentPlayerNo_"))
         }
 
         private void Start()

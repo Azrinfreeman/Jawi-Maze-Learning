@@ -32,7 +32,7 @@ namespace TitleScreen
             newGameButton.onClick.AddListener(StartNewGame);
             exitButton.onClick.AddListener(ExitGame);
             settingsButton.onClick.AddListener(OpenSettings);
-            creditsButton.onClick.AddListener(OpenCredits);
+            //creditsButton.onClick.AddListener(OpenCredits);
             backSettingsButton.onClick.AddListener(CloseSettings);
             mainMenuPanel.SetActive(true);
             settingsPanel.SetActive(false);
@@ -40,7 +40,8 @@ namespace TitleScreen
             _mainMenuButton = mainMenuPanel.GetComponentsInChildren<Button>();
             SelectButton(_mainMenuButton[0]);
 
-            _settingsController = settingsPanel.GetComponent<SettingsController.SettingsController>();
+            _settingsController =
+                settingsPanel.GetComponent<SettingsController.SettingsController>();
         }
 
         private void Update()
@@ -59,13 +60,15 @@ namespace TitleScreen
             {
                 DeselectButton(_mainMenuButton[_currentMainMenuButtonIndex]);
                 _currentMainMenuButtonIndex--;
-                if (_currentMainMenuButtonIndex < 0) _currentMainMenuButtonIndex = _mainMenuButton.Length - 1;
+                if (_currentMainMenuButtonIndex < 0)
+                    _currentMainMenuButtonIndex = _mainMenuButton.Length - 1;
                 SelectButton(_mainMenuButton[_currentMainMenuButtonIndex]);
             }
             else if (direction.y < -0.5f)
             {
                 DeselectButton(_mainMenuButton[_currentMainMenuButtonIndex]);
-                _currentMainMenuButtonIndex = (_currentMainMenuButtonIndex + 1) % _mainMenuButton.Length;
+                _currentMainMenuButtonIndex =
+                    (_currentMainMenuButtonIndex + 1) % _mainMenuButton.Length;
                 SelectButton(_mainMenuButton[_currentMainMenuButtonIndex]);
             }
 
@@ -96,14 +99,16 @@ namespace TitleScreen
 
         private void OnCancel()
         {
-            if (settingsPanel.activeSelf) CloseSettings();
+            if (settingsPanel.activeSelf)
+                CloseSettings();
         }
 
         private void OnMove(InputValue value)
         {
             _inputDirection = value.Get<Vector2>();
 
-            if (_inputDirection.y != 0) _inputDirection.x = 0; // Create a priority for y movement
+            if (_inputDirection.y != 0)
+                _inputDirection.x = 0; // Create a priority for y movement
 
             if (_inputDirection != Vector2.zero)
                 _inputDirection = _inputDirection.normalized; // Normalize the output to be 1 or -1 not floating values

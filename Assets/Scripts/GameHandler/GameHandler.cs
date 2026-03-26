@@ -253,7 +253,7 @@ namespace GameHandler
 
         public void ChangeGhostSpeed()
         {
-            if (GameObject.Find("RedGhost").GetComponent<RedGhostAiMovement>().runSpeed != 4)
+            if (GameObject.Find("RedGhost").GetComponent<RedGhostAiMovement>().runSpeed < 3)
             {
                 //change RedGhostAi tilemap to the next one
                 GameObject.Find("RedGhost").GetComponent<RedGhostAiMovement>().runSpeed++;
