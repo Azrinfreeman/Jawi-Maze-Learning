@@ -1,4 +1,4 @@
-# Pacman Jawi
+# Jawi Maze Learning
 
 A Unity maze-learning prototype that adapts Pac-Man gameplay for audio-guided Jawi practice. Players navigate a maze, listen to an answer's audio cue, and collect the matching answer while avoiding ghosts.
 
