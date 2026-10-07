@@ -1,169 +1,43 @@
-# PacManUnity
+# Pacman Jawi
 
-<div align="center">
-    <img src="https://img.shields.io/badge/Unity-100000?style=for-the-badge&logo=unity&logoColor=white" alt="UnityLogo" style="height: 50px"/>
-    <img src="https://img.shields.io/badge/C%23-239120?style=for-the-badge&logo=c-sharp&logoColor=white" alt="CsharpLogo" style="height: 50px"/>
-<img src="https://user-images.githubusercontent.com/59691442/201502753-3eb47182-da10-4900-b566-6c360a5ede74.png" alt="webGlLogo" style="height: 50px">
-</div>
+A Unity maze-learning prototype that adapts Pac-Man gameplay for audio-guided Jawi practice. Players navigate a maze, listen to an answer's audio cue, and collect the matching answer while avoiding ghosts.
 
-## Description
+Built on **PacManUnity by Quentin Morel (Im-Rises)**. The original author credits, screenshots, and reference material are preserved in the [upstream README](docs/UPSTREAM_README.md); those demos and releases represent the original game.
 
-Pac-Man 3D game made in Unity with C#, using Krita for the game assets.
+## Learning adaptation
 
-The original map is playable as well as two other custom maps.
+- Answer groups select a random target and play its attached audio clip.
+- Correct answer collection awards 100 points, resets player/ghost positions, and pauses briefly for feedback; wrong answer collection invokes the player-death flow.
+- The answer system advances between configured groups and exposes an exit button after the last group.
+- Local player profiles support names, switching, and per-player score storage through `PlayerPrefs`.
+- Directional UI buttons feed movement into the existing tile-based player controller.
+- The inherited framework provides ghost movement, maze navigation, high scores, audio settings, and three maze scenes.
 
-The game is available with three different levels:
-- Original Pac-Man map
-- Custom map 1 (custom maze)
-- Custom map 2 (huge custom maze with camera movement)
+This is a source-reviewed prototype. Answer progression, scene wiring, device controls, and score reporting still need runtime verification. See [validation notes](docs/VALIDATION.md).
 
-> **Note**
-> The project is made using Unity 2020.3.9f1.
+## Open in Unity
 
-## Images
+1. Clone the full repository and open the project root in Unity Hub.
+2. Use **Unity 2022.3.62f3**, recorded in [ProjectVersion.txt](ProjectSettings/ProjectVersion.txt).
+3. Let Unity import the assets and resolve [packages](Packages/manifest.json), including Input System 1.14.0 and TextMesh Pro 3.0.7.
+4. Open [TitleScreen](Assets/Scenes/TitleScreen.unity) and check the profile and level-selection flow in Play Mode using test data.
 
-| Title Screen                                                                                                           |
-|------------------------------------------------------------------------------------------------------------------------|
-| ![title_screen](https://user-images.githubusercontent.com/59691442/201502391-7c8a733c-fef2-45cc-bf5b-1b9f8809d171.png) |
+The six enabled scenes are `TitleScreen`, `Credits`, `LevelSelector`, `CustomLevel1`, `OriginalLevel`, and `CustomLevel2`; their order is recorded in [EditorBuildSettings.asset](ProjectSettings/EditorBuildSettings.asset).
 
-| Original level |
-|----------------|
-|![original_level](https://user-images.githubusercontent.com/59691442/201502390-3773523b-03ef-4025-bf51-e3b7a6ef3a93.png)|
+**Score reporting:** `GameStartupController` contains an HTTP POST integration with the external Hanana service. When a current player exists, startup/profile actions can submit the player's name, identifier, collected totals, and device name. The server implementation and service availability were not verified. Review this integration before running with real learner information; the project should not be described as fully offline.
 
-| Custom level 1                                                                                                            |
-|---------------------------------------------------------------------------------------------------------------------------|
-| ![custom_level1](https://user-images.githubusercontent.com/59691442/201502388-f1f495ce-eba5-4662-b758-b0394b254d04.png)   |
+## Source guide
 
-| Custom level 2                                                                                                           |
-|--------------------------------------------------------------------------------------------------------------------------|
-| ![Custom level 2](https://user-images.githubusercontent.com/59691442/201503022-16f7018a-a41e-4488-8d01-348f0334f120.png) |
+| Area | Source |
+| --- | --- |
+| Target selection and audio prompts | [AnswerController.cs](Assets/AnswerController.cs) |
+| Answer collisions, feedback, and progression | [AnswerCollect.cs](Assets/AnswerCollect.cs) |
+| Player creation and reporting | [GameStartupController.cs](Assets/GameStartupController.cs), [PlayerInputController.cs](Assets/PlayerInputController.cs) |
+| Player switching UI | [DetailPlayer.cs](Assets/DetailPlayer.cs) |
+| On-screen direction buttons | [UIButtonHold.cs](Assets/UIButtonHold.cs) |
+| Tile-based movement | [PlayerController.cs](Assets/Scripts/Player/PlayerController.cs) |
+| Game flow and score handling | [GameHandler.cs](Assets/Scripts/GameHandler/GameHandler.cs), [ScoreHandler.cs](Assets/Scripts/ScoreHandler/ScoreHandler.cs) |
 
-## Videos
+## Credits and license
 
-https://user-images.githubusercontent.com/59691442/201504782-ba127e81-e382-4138-904f-7fb5537dfe3e.mp4
-
-## Features
-
-- Sound and musics
-- Original map
-- Two Custom maps
-- Original Pac-Man ghost AI
-- High-score system with saving
-- Sound/music settings
-- Keyboard and controller support
-
-## Quickstart
-
-### Play online
-
-The game is playable online at the following link:
-
-<a href="https://im-rises.github.io/PacManUnity/"><img src="https://user-images.githubusercontent.com/59691442/201502753-3eb47182-da10-4900-b566-6c360a5ede74.png" alt="webGlLogo" style="height: 50px"></a>
-
-Or follow the direct link below:
-
-<https://im-rises.github.io/PacManUnity/>
-
-## Play on your computer
-
-The game is also downloadable as a desktop application for Windows, Linux and macOS by clicking on the link below (click on the image of your operating system):
-
-[![Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/Im-Rises/PacManUnity/releases/download/1.0/pacman-unity-windows-1.0.zip)
-[![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)](https://github.com/Im-Rises/PacManUnity/releases/download/1.0/pacman-unity-linux-1.0.zip)
-[![macOs](https://img.shields.io/badge/mac%20os-000000?style=for-the-badge&logo=apple&logoColor=white)](https://github.com/Im-Rises/PacManUnity/releases/download/1.0/pacman-unity-macos-1.0.zip)
-
-Or click the direct link below to access the release page.
-
-<https://github.com/Im-Rises/PacManUnity/releases/latest>
-
-## Controls
-
-The game is fully playable with a keyboard and a mouse or a gamepad.
-
-### Game controls
-
-| Action | Key    | Xbox/Playstation controller   |
-|--------|--------|-------------------------------|
-| ↑      | ↑ or W | arrow/joystick	arrow/joystick |
-| ←      | ← or A | arrow/joystick	arrow/joystick |
-| →      | → or S | arrow/joystick	arrow/joystick |
-| ↓      | ↓ or D | arrow/joystick	arrow/joystick |
-
-### User interface
-
-| Action   | Key | Xbox controller | Playstation controller  |
-|----------|-----|-----------------|-------------------------|
-| Back     | ESC | B               |     O                   |
-| Validate | ESC | A               | X                       |
-| ↑      | ↑ or W | arrow/joystick	arrow/joystick |
-| ←      | ← or A | arrow/joystick	arrow/joystick |
-| →      | → or S | arrow/joystick	arrow/joystick |
-| ↓      | ↓ or D | arrow/joystick	arrow/joystick |
-
-## Project Architecture
-
-~~~
-PhysicalEngine
-├── .github
-│  ├── workflows
-│  │   |── greetings.yml
-│  │   |── label.yml
-│  │   |── stale.yml
-│  │   |── super-linter.yml
-│  ├── labeler.yml
-│  ├── release.yml
-├── Assets
-│  ├── *
-├── Krita
-│  ├── *
-├── ProjectSettings
-|  ├── *
-├── .editorconfig
-├── .gitattributes
-├── .gitignore
-├── README.md
-~~~
-
-## GitHub Actions
-
-[![Lint Code Base](https://github.com/Im-Rises/PacManUnity/actions/workflows/super-linter.yml/badge.svg?branch=main)](https://github.com/Im-Rises/PacManUnity/actions/workflows/super-linter.yml)
-[![pages-build-deployment](https://github.com/Im-Rises/PacManUnity/actions/workflows/pages/pages-build-deployment/badge.svg?branch=web-version)](https://github.com/Im-Rises/PacManUnity/actions/workflows/pages/pages-build-deployment)
-
-- Lint Code Base: Script to check the code quality for different languages.
-- pages-build-deployment: Script to build the project and deploy it to GitHub Pages.
-
-## Documentations
-
-Unity:
-
-<https://unity.com/>
-
-Krita:
-
-<https://krita.org/en/>
-
-Super Linter action:
-
-<https://github.com/github/super-linter>
-
-PacMan movement:
-
-<https://gameinternals.com/understanding-pac-man-ghost-behavior>
-
-Audio files:
-
-<https://www.classicgaming.cc/classics/pac-man/sounds>
-<https://www.voicy.network/clips/cHeHx76RLUGh1xsxwb5Xog>
-
-Pac-Man switch mode times:
-
-<https://www.gamedeveloper.com/design/the-pac-man-dossier>
-
-## Authors
-
-Quentin MOREL:
-
-- @Im-Rises
-- <https://github.com/Im-Rises>
-
-[![GitHub contributors](https://contrib.rocks/image?repo=Im-Rises/PacManUnity)](https://github.com/Im-Rises/PacManUnity/graphs/contributors)
+The base project is [Im-Rises/PacManUnity](https://github.com/Im-Rises/PacManUnity), by Quentin Morel. Its MIT copyright notice is retained in [LICENSE](LICENSE). Refer to the preserved upstream documentation for original asset/audio references. This documentation does not establish separate licensing rights for every included media asset.
